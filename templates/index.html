@@ -31,13 +31,7 @@
         <!-- Navigation Tabs -->
         <ul class="nav nav-tabs mb-3" id="mainTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="connection-tab" data-bs-toggle="tab" data-bs-target="#connection" type="button" role="tab">Connection</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="search-tab" data-bs-toggle="tab" data-bs-target="#search" type="button" role="tab">Search</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="options-tab" data-bs-toggle="tab" data-bs-target="#options" type="button" role="tab">Options</button>
+                <button class="nav-link active" id="documentation-tab" data-bs-toggle="tab" data-bs-target="#documentation" type="button" role="tab">Documentation</button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="vector-store-tab" data-bs-toggle="tab" data-bs-target="#vector-store" type="button" role="tab">Vector Store</button>
@@ -46,9 +40,10 @@
         
         <!-- Tab Content -->
         <div class="tab-content" id="mainTabContent">
-            <!-- Connection Tab -->
-            <div class="tab-pane fade show active" id="connection" role="tabpanel">
-                <div class="card">
+            <!-- Documentation Tab -->
+            <div class="tab-pane fade show active" id="documentation" role="tabpanel">
+                <!-- Connection Form -->
+                <div class="card" id="connectionCard">
                     <div class="card-header">
                         <h5 class="mb-0">Database Connection</h5>
                     </div>
@@ -84,11 +79,9 @@
                         </form>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Search Tab -->
-            <div class="tab-pane fade" id="search" role="tabpanel">
-                <div class="card">
+
+                <!-- Search Form -->
+                <div class="card" id="searchCard" style="display: none;">
                     <div class="card-header">
                         <h5 class="mb-0">Search Documentation</h5>
                     </div>
@@ -103,11 +96,9 @@
                         <div id="searchResults" class="mt-4"></div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Options Tab -->
-            <div class="tab-pane fade" id="options" role="tabpanel">
-                <div class="card">
+                
+                <!-- Options Form -->
+                <div class="card" id="optionsCard" style="display: none;">
                     <div class="card-header">
                         <h5 class="mb-0">Documentation Options</h5>
                     </div>
@@ -149,6 +140,46 @@
                         </form>
                     </div>
                 </div>
+                
+                <!-- Progress Card -->
+                <div class="card" id="progressCard" style="display: none;">
+                    <div class="card-header">
+                        <h5 class="mb-0">Documentation Progress</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="progress mb-3">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" 
+                                 style="width: 0%" 
+                                 aria-valuenow="0" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Current Object:</strong> <span id="currentObject">Initializing...</span></p>
+                                <p><strong>Progress:</strong> <span id="processedCount">0</span> / <span id="totalCount">0</span></p>
+                                <p><strong>Estimated Time Remaining:</strong> <span id="timeRemaining">Calculating...</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="stats-box">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="stats-label">Total Cost</div>
+                                            <div class="stats-value" id="costInfo">$0.00</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="stats-label">Total Tokens</div>
+                                            <div class="stats-value" id="tokenInfo">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <!-- Vector Store Tab -->
@@ -185,46 +216,6 @@
                             </div>
                         </div>
                         <button class="btn btn-danger" id="clearVectorStore">Clear Vector Store</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Progress Card -->
-        <div class="card" id="progressCard" style="display: none;">
-            <div class="card-header">
-                <h5 class="mb-0">Documentation Progress</h5>
-            </div>
-            <div class="card-body">
-                <div class="progress mb-3">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                         role="progressbar" 
-                         style="width: 0%" 
-                         aria-valuenow="0" 
-                         aria-valuemin="0" 
-                         aria-valuemax="100">
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Current Object:</strong> <span id="currentObject">Initializing...</span></p>
-                        <p><strong>Progress:</strong> <span id="processedCount">0</span> / <span id="totalCount">0</span></p>
-                        <p><strong>Estimated Time Remaining:</strong> <span id="timeRemaining">Calculating...</span></p>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="stats-box">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="stats-label">Total Cost</div>
-                                    <div class="stats-value" id="costInfo">$0.00</div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="stats-label">Total Tokens</div>
-                                    <div class="stats-value" id="tokenInfo">0</div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
