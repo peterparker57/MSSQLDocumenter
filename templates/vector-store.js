@@ -10,11 +10,17 @@ class VectorStoreManager {
         if (this.clearBtn) {
             this.clearBtn.addEventListener('click', () => this.clearVectorStore());
         }
+
+        // Update stats when tab is shown
+        const vectorStoreTab = document.getElementById('vector-store-tab');
+        if (vectorStoreTab) {
+            vectorStoreTab.addEventListener('shown.bs.tab', () => this.updateStats());
+        }
     }
 
     async updateStats() {
         try {
-            const response = await fetch('/api/status');
+            const response = await fetch('/api/vector-store/status');
             if (!response.ok) {
                 throw new Error('Failed to fetch vector store status');
             }
@@ -40,7 +46,7 @@ class VectorStoreManager {
         }
 
         try {
-            const response = await fetch('/api/clear', {
+            const response = await fetch('/api/vector-store/clear', {
                 method: 'POST'
             });
 
@@ -66,3 +72,6 @@ class VectorStoreManager {
         }
     }
 }
+
+// Initialize vector store manager
+const vectorStoreManager = new VectorStoreManager();
