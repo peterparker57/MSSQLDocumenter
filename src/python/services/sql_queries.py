@@ -1,0 +1,24 @@
+"""SQL queries used for database documentation."""
+
+OBJECT_QUERIES = {
+    "table": """SELECT s.name as schema_name, t.name as name, 'table' as type FROM sys.tables t JOIN sys.schemas s ON t.schema_id = s.schema_id WHERE t.is_ms_shipped = 0 {schema_filter} ORDER BY s.name, t.name""",
+    "view": """SELECT s.name as schema_name, v.name as name, 'view' as type FROM sys.views v JOIN sys.schemas s ON v.schema_id = s.schema_id WHERE v.is_ms_shipped = 0 {schema_filter} ORDER BY s.name, v.name""",
+    "procedure": """SELECT s.name as schema_name, p.name as name, 'procedure' as type FROM sys.procedures p JOIN sys.schemas s ON p.schema_id = s.schema_id WHERE p.is_ms_shipped = 0 {schema_filter} ORDER BY s.name, p.name""",
+    "function": """SELECT s.name as schema_name, f.name as name, 'function' as type FROM sys.objects f JOIN sys.schemas s ON f.schema_id = s.schema_id WHERE f.type IN ('FN', 'IF', 'TF') AND f.is_ms_shipped = 0 {schema_filter} ORDER BY s.name, f.name"""
+}
+
+TABLE_COLUMNS_QUERY = """SELECT c.name as column_name, t.name as data_type, c.max_length, c.precision, c.scale, c.is_nullable, CAST(ISNULL(ep.value, '') AS NVARCHAR(MAX)) as description FROM sys.columns c JOIN sys.types t ON c.user_type_id = t.user_type_id JOIN sys.tables tbl ON c.object_id = tbl.object_id JOIN sys.schemas s ON tbl.schema_id = s.schema_id LEFT JOIN sys.extended_properties ep ON ep.major_id = c.object_id AND ep.minor_id = c.column_id AND ep.name = 'MS_Description' WHERE s.name = ? AND tbl.name = ? ORDER BY c.column_id"""
+
+VIEW_COLUMNS_QUERY = """SELECT c.name as column_name, t.name as data_type, c.max_length, c.precision, c.scale, c.is_nullable, CAST(ISNULL(ep.value, '') AS NVARCHAR(MAX)) as description FROM sys.columns c JOIN sys.types t ON c.user_type_id = t.user_type_id JOIN sys.views v ON c.object_id = v.object_id JOIN sys.schemas s ON v.schema_id = s.schema_id LEFT JOIN sys.extended_properties ep ON ep.major_id = c.object_id AND ep.minor_id = c.column_id AND ep.name = 'MS_Description' WHERE s.name = ? AND v.name = ? ORDER BY c.column_id"""
+
+INDEXES_QUERY = """SELECT i.name as index_name, i.type_desc, i.is_unique, STRING_AGG(c.name, ', ') WITHIN GROUP (ORDER BY ic.key_ordinal) as columns FROM sys.indexes i JOIN sys.index_columns ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id JOIN sys.tables t ON i.object_id = t.object_id JOIN sys.schemas s ON t.schema_id = s.schema_id WHERE s.name = ? AND t.name = ? GROUP BY i.name, i.type_desc, i.is_unique"""
+
+FOREIGN_KEYS_QUERY = """SELECT fk.name as fk_name, OBJECT_SCHEMA_NAME(fk.referenced_object_id) as referenced_schema, OBJECT_NAME(fk.referenced_object_id) as referenced_table, STRING_AGG(c.name, ', ') WITHIN GROUP (ORDER BY fkc.constraint_column_id) as columns, STRING_AGG(rc.name, ', ') WITHIN GROUP (ORDER BY fkc.constraint_column_id) as referenced_columns FROM sys.foreign_keys fk JOIN sys.foreign_key_columns fkc ON fk.object_id = fkc.constraint_object_id JOIN sys.columns c ON fkc.parent_object_id = c.object_id AND fkc.parent_column_id = c.column_id JOIN sys.columns rc ON fkc.referenced_object_id = rc.object_id AND fkc.referenced_column_id = rc.column_id JOIN sys.tables t ON fk.parent_object_id = t.object_id JOIN sys.schemas s ON t.schema_id = s.schema_id WHERE s.name = ? AND t.name = ? GROUP BY fk.name, fk.referenced_object_id"""
+
+PROCEDURE_PARAMS_QUERY = """SELECT p.name as param_name, t.name as data_type, p.max_length, p.precision, p.scale, p.is_output, CAST(ISNULL(ep.value, '') AS NVARCHAR(MAX)) as description FROM sys.parameters p JOIN sys.types t ON p.user_type_id = t.user_type_id JOIN sys.procedures sp ON p.object_id = sp.object_id JOIN sys.schemas s ON sp.schema_id = s.schema_id LEFT JOIN sys.extended_properties ep ON ep.major_id = p.object_id AND ep.minor_id = p.parameter_id AND ep.name = 'MS_Description' WHERE s.name = ? AND sp.name = ? ORDER BY p.parameter_id"""
+
+FUNCTION_PARAMS_QUERY = """SELECT p.name as param_name, t.name as data_type, p.max_length, p.precision, p.scale, CAST(ISNULL(ep.value, '') AS NVARCHAR(MAX)) as description FROM sys.parameters p JOIN sys.types t ON p.user_type_id = t.user_type_id JOIN sys.objects f ON p.object_id = f.object_id JOIN sys.schemas s ON f.schema_id = s.schema_id LEFT JOIN sys.extended_properties ep ON ep.major_id = p.object_id AND ep.minor_id = p.parameter_id AND ep.name = 'MS_Description' WHERE s.name = ? AND f.name = ? AND f.type IN ('FN', 'IF', 'TF') ORDER BY p.parameter_id"""
+
+FUNCTION_RETURN_TYPE_QUERY = """SELECT t.name as return_type, f.max_length, f.precision, f.scale FROM sys.objects f JOIN sys.types t ON f.return_type = t.user_type_id JOIN sys.schemas s ON f.schema_id = s.schema_id WHERE s.name = ? AND f.name = ? AND f.type IN ('FN', 'IF', 'TF')"""
+
+OBJECT_DEFINITION_QUERY = """SELECT OBJECT_DEFINITION(OBJECT_ID(? + '.' + ?)) as definition"""
